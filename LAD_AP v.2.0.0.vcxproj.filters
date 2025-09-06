@@ -26,5 +26,8 @@
     <ClInclude Include="token_converter.h">
       <Filter>Исходные файлы</Filter>
     </ClInclude>
+    <ClInclude Include="Assembler_intrepretator.h">
+      <Filter>Исходные файлы</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

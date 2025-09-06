@@ -130,6 +130,7 @@
     <ClCompile Include="LAD_AP v.2.0.0.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Assembler_intrepretator.h" />
     <ClInclude Include="tokenizator.h" />
     <ClInclude Include="token_converter.h" />
   </ItemGroup>
