@@ -15,8 +15,8 @@ int main()
 	size_t max_instr = 10;
 	size_t max_tacts = 20;
 	string** grid = array2d_init(max_instr);
-	tokens_to_grid(token_array, grid, token_count);
-	size_t after_burn_instr = count_instr(token_array, token_count);
+	tokens_to_grid(token_array, grid, token_count, max_instr);
+	//size_t after_burn_instr = count_instr(token_array, token_count);
 	cout << endl << "output: " << endl << endl;
-	output_grid(grid, after_burn_instr, max_tacts);
+	output_grid(grid, max_instr, max_tacts);
 }
