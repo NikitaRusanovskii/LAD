@@ -35,12 +35,17 @@ void output_grid(string** grid, size_t instr, size_t tacts);
 
 
 
-array<cmd, 21> cmd_array = { {
+array<cmd, 25> cmd_array = { {
     {"add", 'r', 'r', 'r', 3}, {"fadd", 'f', 'f', 'f', 3},  // arithmetic
     {"sub", 'r', 'r', 'r', 3}, {"fsub", 'f', 'f', 'f', 3},
     {"mul", 'r', 'r', 'r', 3}, {"fmul", 'f', 'f', 'f', 3},
     {"div", 'r', 'r', 'r', 3}, {"fdiv", 'f', 'f', 'f', 3},
     {"inc", 'r', ' ', ' ', 1},
+
+    {"and", 'r', 'r', 'r', 3}, // binare operations
+    {"or",  'r', 'r', 'r', 3},
+    {"xor", 'r', 'r', 'r', 3},
+    {"not", 'r', ' ', ' ', 1},
 
     {"cmp", 'r', 'r', ' ', 2},  // jmps
     {"jmp", 'a', ' ', ' ', 1},
