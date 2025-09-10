@@ -3,7 +3,6 @@
 #include <string>
 #include <array>
 #include "tokenizator.h"
-//#include "instruction.h"
 
 const size_t max_tacts = 20;
 int error = 0;
@@ -26,15 +25,17 @@ string** array2d_init(size_t instr);
 bool is_instruction(string token);
 string delete_first_char(const string token);
 string delete_last_char(string token);
+//int jmp_vector(string token);
 bool is_register(string token);
 bool is_address(string token);
-//int count_instr(string* tokens, size_t& token_count);
 void tokens_to_grid(string* tokens, string** &grid, size_t& token_count, size_t& ic);
-int is_valid_grid(string** grid, size_t instr_amount);
+void is_valid_grid(string** grid, size_t instr_amount);
 void refresh_grid(string**& grid, size_t instr);
 void output_grid(string** grid, size_t instr, size_t tacts);
 
-array<cmd, 20> cmd_array = { {
+
+
+array<cmd, 21> cmd_array = { {
     {"add", 'r', 'r', 'r', 3}, {"fadd", 'f', 'f', 'f', 3},  // arithmetic
     {"sub", 'r', 'r', 'r', 3}, {"fsub", 'f', 'f', 'f', 3},
     {"mul", 'r', 'r', 'r', 3}, {"fmul", 'f', 'f', 'f', 3},
@@ -53,7 +54,9 @@ array<cmd, 20> cmd_array = { {
 
     {"mv", 'r', 'r', ' ', 2}, // memory
     {"ld", 'a', 'r', ' ', 2},
-    {"st", 'r', 'a', ' ', 2}
+    {"st", 'r', 'a', ' ', 2},
+
+    {"nop", ' ', ' ', ' ', 0 }
 } };
 
 bool is_instruction(string token) {
@@ -95,8 +98,19 @@ bool is_register(string token) {
 }
 
 bool is_address(string token) {
-    return token[0] == '[' && is_number(delete_last_char(delete_first_char(token))) &&
-        token[token.size()-1] == ']';
+    bool res = 1;
+    if(token[0]!='[' || token[token.size() - 1] != ']'){
+        res = 0;
+    }
+    else if ((token[1] == '-' || token[1] == '+') &&
+        !is_number(delete_last_char(delete_first_char(delete_first_char(token))))) {
+        res = 0;
+    }
+    else if((token[1] != '-' && token[1] != '+') &&
+        !is_number(delete_last_char(delete_first_char(token)))) {
+        res = 0;
+    }
+    return res;
 }
 
 string** array2d_init(size_t instr) {
@@ -119,12 +133,22 @@ string delete_last_char(string token) {
     return token.size() > 1 ? token : "";
 }
 
+//int jmp_vector(string token){
+//    int res;
+//    switch (token[1]){
+//    case'+':
+//        res= 1;
+//    case'-':
+//        res=-1;
+//    default:
+//        res= 0;
+//    }
+//    return res;
+//}
 
 void tokens_to_grid(string* tokens, string** &grid, size_t& token_count, size_t& ic) {
     size_t j = 0;
     ic = 0;
-    //size_t instr_amount = count_instr(tokens, token_count);
-    //if (instr_amount == 0) { error = -120; } // no instructions error or wrong instruction
     while(j<token_count) {
         grid[ic][0] = to_string(ic * 4); // instruction number * 4
         string current_com = tokens[j++];
@@ -150,7 +174,10 @@ void tokens_to_grid(string* tokens, string** &grid, size_t& token_count, size_t&
 int is_valid_line(string** grid, size_t iptr) {
     int res = 0;
     if (!is_number(grid[iptr][0])) {
-            res = -104; // instruction number isnt correct error
+        res = -104; // instruction number isnt correct error
+    }
+    if (iptr > 0 && grid[iptr - 1][1] == "nop") {
+        res = -140;
     }
     size_t cmd_type = cmd_pos(grid[iptr][1]);
     if (cmd_type == -1) { res = -100; } // there s no such cmd error
@@ -180,12 +207,10 @@ int is_valid_line(string** grid, size_t iptr) {
     
     return res;
 }
-int is_valid_grid(string** grid, size_t instr_amount) {
-   int res = 0;
+void is_valid_grid(string** grid, size_t instr_amount) {
     for (size_t i = 0; i < instr_amount; i++) {
-        res = is_valid_line(grid, i);
+        error = is_valid_line(grid, i);
     }
-    return res;
 }
 
 void refresh_grid(string** &grid, size_t instr) {
@@ -203,6 +228,7 @@ void refresh_grid(string** &grid, size_t instr) {
         }
     }
     free(tmp_grid);
+    is_valid_grid(grid, instr);
 }
 
 void output_grid(string** grid, size_t instr, size_t tacts) {
@@ -213,13 +239,10 @@ void output_grid(string** grid, size_t instr, size_t tacts) {
     cout << endl;
   }
   string ans = "valid";
-  if (error == 0) {
-      error = is_valid_grid(grid, instr);
-  }
   
   if (error != 0) {
-      ans = "invalid. Error " + to_string(error) + ".";
+      ans = "invalid. Error " + to_string(error);
   }
 
-  cout << "grid is " << ans << endl;
+  cout << "grid is " << ans << "." << endl;
 }
