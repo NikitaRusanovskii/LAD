@@ -119,17 +119,6 @@ string delete_last_char(string token) {
     return token.size() > 1 ? token : "";
 }
 
-//int count_instr(string* tokens, size_t& token_count) {
-//    int res=0;
-//    for (size_t i = 0; i < token_count; i++) {
-//        if (is_instruction(tokens[i])) res++;
-//        else if(!is_register(tokens[i]) && !is_address(tokens[i])) {
-//            res = 0;
-//            break;
-//        }
-//    }
-//    return res;
-//}
 
 void tokens_to_grid(string* tokens, string** &grid, size_t& token_count, size_t& ic) {
     size_t j = 0;
