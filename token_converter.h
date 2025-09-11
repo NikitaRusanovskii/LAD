@@ -155,22 +155,21 @@ void tokens_to_grid(string* tokens, string** &grid, size_t& token_count, size_t&
     size_t j = 0;
     ic = 0;
     while(j<token_count) {
-        grid[ic][0] = to_string(ic * 4); // instruction number * 4
         string current_com = tokens[j++];
         size_t aptr = cmd_pos(current_com);
         if (aptr == -1) { error = -130; break; } // wrong instruction error
-        grid[ic][1] = current_com;
+        grid[ic][0] = current_com;
         if (cmd_array[aptr].arg_amount == 1) { // cmd has 1 arg
-            grid[ic][2] = tokens[j++];
+            grid[ic][1] = tokens[j++];
         }
         else if (cmd_array[aptr].arg_amount == 2) { // cmd has 2 args
+            grid[ic][1] = tokens[j++];
             grid[ic][2] = tokens[j++];
-            grid[ic][3] = tokens[j++];
         }
         else if(cmd_array[aptr].arg_amount == 3){ // cmd has 3 args
+            grid[ic][1] = tokens[j++];
             grid[ic][2] = tokens[j++];
             grid[ic][3] = tokens[j++];
-            grid[ic][4] = tokens[j++];
         }
         ic++;
     }
@@ -178,30 +177,27 @@ void tokens_to_grid(string* tokens, string** &grid, size_t& token_count, size_t&
 }
 int is_valid_line(string** grid, size_t iptr) {
     int res = 0;
-    if (!is_number(grid[iptr][0])) {
-        res = -104; // instruction number isnt correct error
-    }
-    if (iptr > 0 && grid[iptr - 1][1] == "nop") {
+    if (iptr > 0 && grid[iptr - 1][0] == "nop") {
         res = -140;
     }
-    size_t cmd_type = cmd_pos(grid[iptr][1]);
+    size_t cmd_type = cmd_pos(grid[iptr][0]);
     if (cmd_type == -1) { res = -100; } // there s no such cmd error
     else {
-        char cmd_arg1 = grid[iptr][2][0];
-        char cmd_arg2 = grid[iptr][3][0];
-        char cmd_arg3 = grid[iptr][4][0];
+        char cmd_arg1 = grid[iptr][1][0];
+        char cmd_arg2 = grid[iptr][2][0];
+        char cmd_arg3 = grid[iptr][3][0];
 
         if (cmd_arg1 == '[') cmd_arg1 = 'a';
         if (cmd_arg2 == '[') cmd_arg2 = 'a';
         if (cmd_arg3 == '[') cmd_arg3 = 'a';
 
-        if (!is_address(grid[iptr][2]) && !is_register(grid[iptr][2])
+        if (!is_address(grid[iptr][1]) && !is_register(grid[iptr][1])
             && cmd_array[cmd_type].arg_amount >= 1) { res = -101; } // 1st arg error
 
-        if (!is_address(grid[iptr][3]) && !is_register(grid[iptr][3])
+        if (!is_address(grid[iptr][2]) && !is_register(grid[iptr][2])
             && cmd_array[cmd_type].arg_amount >= 2) { res = -102; } // 2nd arg error
 
-        if (!is_address(grid[iptr][4]) && !is_register(grid[iptr][4])
+        if (!is_address(grid[iptr][3]) && !is_register(grid[iptr][3])
             && cmd_array[cmd_type].arg_amount == 3) { res = -103; } // 3rd arg error
 
         if(cmd_array[cmd_type].arg1!=cmd_arg1 || cmd_array[cmd_type].arg2 != cmd_arg2 ||
