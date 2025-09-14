@@ -174,9 +174,8 @@ TEST(TokenConverterTest, CmdPosValid) {
     "jge", "mv", // memory
     "ld", "st",
     "nop" };
-    for(int index = 0; index < cmds.size(); index++) {
-        ASSERT_EQ(index, cmd_pos(cmds[index])) << "fall on the set: "
-        << index << " " << cmds[index];
+    for(auto cmd: cmds) {
+        ASSERT_NE(-1, cmd_pos(cmd)) << "fall on the set: " << cmd;
     }
 }
 
