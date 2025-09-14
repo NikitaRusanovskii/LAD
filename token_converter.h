@@ -21,6 +21,7 @@ struct cmd {
     }
 };
 
+
 string** array2d_init(size_t instr);
 bool is_instruction(string token);
 string delete_first_char(const string token);
@@ -32,7 +33,6 @@ void tokens_to_grid(string* tokens, string** &grid, size_t& token_count, size_t&
 void is_valid_grid(string** grid, size_t instr_amount);
 void refresh_grid(string**& grid, size_t instr);
 void output_grid(string** grid, size_t instr, size_t tacts);
-
 
 
 array<cmd, 25> cmd_array = { {
@@ -133,7 +133,7 @@ string delete_first_char(const string token) {
     return token.size() > 1 ? token.substr(1) : "";
 }
 
-string delete_last_char(string token) {
+string delete_last_char(string token) { // падает на пустой строке
     token.pop_back();
     return token.size() > 1 ? token : "";
 }
