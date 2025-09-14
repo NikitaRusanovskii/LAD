@@ -95,7 +95,7 @@ TEST(TokenConverterTest, IsRegisterInvalid) {
 
 TEST(TokenConverterTest, IsAddressValid) {
     vector<string> data_set = {
-        "[000]", "[004]", "[1004]", "[-10]", "[1020]",
+        "[000]", "[004]", "[1004]", "[-12]", "[1020]",
         "[1016]", "[4]"
     };
 
