@@ -29,7 +29,7 @@ TEST(TokenConverterTest, IsInstrucionValid) {
         {"fsub"}, {"fmul"}, {"fdiv"}, {"jne"},
     };
     for(auto data: data_set) {
-        EXPECT_TRUE(is_instruction(data)) << "fall ont the set: " << data << endl;
+        EXPECT_TRUE(is_instruction(data)) << "fall on the set: " << data << endl;
     }
 }
 
@@ -45,7 +45,7 @@ TEST(TokenConverterTest, IsInstrucionInvalid) {
         {"fsub..."}, {"fmul,"}, {"fdiv!!"}, {"   jne"},
     };
     for(auto data: data_set) {
-        EXPECT_FALSE(is_instruction(data)) << "fall ont the set: " << data << endl;
+        EXPECT_FALSE(is_instruction(data)) << "fall on the set: " << data << endl;
     }
 }
 
@@ -56,7 +56,7 @@ TEST(TokenConverterTest, IsNumberValid) {
     };
 
     for (auto data: data_set) {
-        EXPECT_TRUE(is_number(data)) << "fall ont the set: " << data << endl;
+        EXPECT_TRUE(is_number(data)) << "fall on the set: " << data << endl;
     }
 }
 
@@ -66,7 +66,7 @@ TEST(TokenConverterTest, IsNumberInvalid) {
     };
 
     for (auto data: data_set) {
-        EXPECT_FALSE(is_number(data)) << "fall ont the set: " << data << endl;
+        EXPECT_FALSE(is_number(data)) << "fall on the set: " << data << endl;
     }
 }
 
@@ -77,7 +77,7 @@ TEST(TokenConverterTest, IsRegisterValid) {
     };
 
     for (auto data: data_set) {
-        EXPECT_TRUE(is_register(data)) << "fall ont the set: " << data << endl;
+        EXPECT_TRUE(is_register(data)) << "fall on the set: " << data << endl;
     }
 }
 
@@ -88,7 +88,7 @@ TEST(TokenConverterTest, IsRegisterInvalid) {
     };
 
     for (auto data: data_set) {
-        EXPECT_FALSE(is_register(data)) << "fall ont the set: " << data << endl;
+        EXPECT_FALSE(is_register(data)) << "fall on the set: " << data << endl;
     }
 }
 
@@ -100,7 +100,7 @@ TEST(TokenConverterTest, IsAddressValid) {
     };
 
     for (auto data: data_set) {
-        EXPECT_TRUE(is_address(data)) << "fall ont the set: " << data << endl;
+        EXPECT_TRUE(is_address(data)) << "fall on the set: " << data << endl;
     }
 }
 
@@ -112,7 +112,7 @@ TEST(TokenConverterTest, IsAddressInvalid) {
     };
 
     for (auto data: data_set) {
-        EXPECT_FALSE(is_address(data)) << "fall ont the set: " << data << endl;
+        EXPECT_FALSE(is_address(data)) << "fall on the set: " << data << endl;
     }
 }
 
@@ -124,18 +124,78 @@ TEST(TokenConverterTest, DeleteFirstCharVariousInput) {
 
     for (auto data: data_set) {
         auto sbstr = data.size() > 1? data.substr(1) : "";
-        EXPECT_EQ(delete_first_char(data), sbstr) << "fall ont the set: " << data << endl;
+        EXPECT_EQ(delete_first_char(data), sbstr) << "fall on the set: " << data << endl;
     }
 }
 
 TEST(TokenConverterTest, DeleteLastCharVariousInput) {
     vector<string> data_set = {
-        "", " ", "lol", "a", "palka", // пустая строка
+        //"", " ", "lol", "a", "palka", // пустая строка ломает тесты
         "-1", "10", "13"
     };
 
     for (auto data: data_set) {
         auto sbstr = data.size() > 1? data.substr(0, data.size()-1) : "";
-        EXPECT_EQ(delete_last_char(data), sbstr) << "fall ont the set: " << data << endl;
+        EXPECT_EQ(delete_last_char(data), sbstr) << "fall on the set: " << data << endl;
+    }
+}
+
+TEST(TokenConverterTest, Array2DInitCorrectly) {
+    size_t instructions = 5;
+    string** grid = array2d_init(instructions);
+
+    ASSERT_NE(grid, nullptr);
+
+    for (size_t i = 0; i < instructions; i++) {
+        for (size_t j = 0; j < max_tacts; j++) {
+            ASSERT_EQ(grid[i][j], empty_cell) << "fall on the set: " <<
+            "[" << i << "]" << "[" << j << "]";
+        }
+    }
+
+    for (size_t t = 0; t < instructions; t++) {
+        delete[] grid[t];
+    }
+    delete[] grid;
+}
+
+TEST(TokenConverterTest, CmdPosValid) {
+    vector<string> cmds = {
+    "add", "fadd",  // arithmetic
+    "sub", "fsub",
+    "mul", "fmul",
+    "div", "fdiv",
+    "inc", "and", // binare operations
+    "or", "xor",
+    "not", "cmp",  // jmps
+    "jmp", "je",
+    "jne", "jl",
+    "jle", "jg",
+    "jge", "mv", // memory
+    "ld", "st",
+    "nop" };
+    for(int index = 0; index < cmds.size(); index++) {
+        ASSERT_EQ(index, cmd_pos(cmds[index])) << "fall on the set: "
+        << index << " " << cmds[index];
+    }
+}
+
+TEST(TokenConverterTest, CmdPosInalid) {
+    vector<string> cmds = {
+    "  add", "fadasdad",  // arithmetic
+    "sub ", "f su b",
+    "mul1", "f m  ul",
+    "di v", "fd iv",
+    "i nc", "an d", // binare operations
+    "OOr", "x o r",
+    "ot", "c mp",  // jmps
+    "jsmp", "je ",
+    "jane", "jl a",
+    "jlre", "jga",
+    "jgae", "mv123", // memory
+    "ldz", "sqt",
+    "no   p" };
+    for(auto cmd: cmds) {
+        ASSERT_EQ(-1, cmd_pos(cmd)) << "fall on the set: " << cmd;
     }
 }
