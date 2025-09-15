@@ -78,7 +78,7 @@ bool is_instruction(string token) {
 
 size_t cmd_pos(string cmd) {
     to_lower_letter(cmd);
-    size_t res = -1;
+    size_t res = -1; // size_t беззнаковый, res будет не -1, а максимально большим
     for (size_t i = 0; i < cmd_array.size(); i++) {
         if (cmd == cmd_array[i].name) { 
             res = i;
@@ -151,6 +151,7 @@ string delete_last_char(string token) { // падает на пустой стр
 //    return res;
 //}
 
+// нужно больше контекста для тестирования
 void tokens_to_grid(string* tokens, string** &grid, size_t& token_count, size_t& ic) {
     size_t j = 0;
     ic = 0;
@@ -175,7 +176,7 @@ void tokens_to_grid(string* tokens, string** &grid, size_t& token_count, size_t&
     }
     refresh_grid(grid, ic);
 }
-int is_valid_line(string** grid, size_t iptr) {
+int is_valid_line(string** grid, size_t iptr) { // мне нужно больше контекста для тестирования
     int res = 0;
     if (iptr > 0 && grid[iptr - 1][0] == "nop") {
         res = -140;
@@ -214,21 +215,29 @@ void is_valid_grid(string** grid, size_t instr_amount) {
     }
 }
 
-void refresh_grid(string** &grid, size_t instr) {
+void refresh_grid(string** &grid, size_t instr) { // не совсем понял идею наличия перезагрузки грида
     string** tmp_grid = array2d_init(instr);
     for (int i = 0; i < instr; i++) {
         for (int j = 0; j < max_tacts; j++) {
             tmp_grid[i][j] = grid[i][j];
         }
     }
-    free(grid);
+    free(grid); // неправильно, может вызвать UB
+    /*for (int i = 0; i < instr; i++) {
+        delete[] grid[i];
+    }
+    delete[] grid;*/
     grid = array2d_init(instr);
     for (int i = 0; i < instr; i++) {
         for (int j = 0; j < max_tacts; j++) {
             grid[i][j] = tmp_grid[i][j];
         }
     }
-    free(tmp_grid);
+    free(tmp_grid); // неправильно, может вызвать UB
+    /*for (int i = 0; i < instr; i++) {
+        delete[] tmp_grid[i];
+    }
+    delete[] tmp_grid;*/
     is_valid_grid(grid, instr);
 }
 
