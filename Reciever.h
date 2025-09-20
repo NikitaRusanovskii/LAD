@@ -10,6 +10,7 @@ class Reciever // интерфейс
 {
 public:
 	Reciever() = default;
+	~Reciever() = default;
 	virtual void ADD() = 0;
 	virtual void SUB() = 0;
 	virtual void FADD() = 0;
@@ -51,13 +52,14 @@ class Remote : public Reciever // реализатор всех инструкций
 	double* registers_f;
 
 	vector<double> memory;
-	string flag;
-
+	
+	int flag;
 public:
 	Remote(string** _grid, vector<double> _memory);
 	~Remote()
 	{
-		//позже
+		delete registers;
+		delete registers_f;
 	}
 	//вспомогательные
 	int digit_getter(string s);

@@ -29,15 +29,20 @@ int Remote::digit_getter(string s)
 
 int Remote::jmp_address_detection(string token)
 {
+	int res;
 	switch (token[1])
 	{
 	case'+':
-		return 1;
+		res = 1;
+		break;
 	case'-':
-		return -1;
+		res =  -1;
+		break;
 	default:
-		return 0;
+		res = 0;
+		break;
 	}
+	return res;
 }
 
 int* Remote::getRegisters()
@@ -134,19 +139,19 @@ void Remote::SHL()
 void Remote::CMP()
 {
 	if (REG(1) == REG(2)) {
-		this->flag = "equal";
+		this->flag = 0;
 	}
 	else if (REG(1) <= REG(2)) { // начиная с этого условия и ниже flag попадает также под JNE
-		this->flag = "less or equal";
+		this->flag = -2;
 	}
 	else if (REG(1) < REG(2)) {
-		this->flag = "less";
+		this->flag = -1;
 	}
 	else if (REG(1) >= REG(2)) {
-		this->flag = "grace or equal";
+		this->flag = 2;
 	}
 	else if (REG(1) > REG(2)) {
-		this->flag = "grace";
+		this->flag = 1;
 	}
 }
 
@@ -162,58 +167,58 @@ void Remote::DEC()
 
 void Remote::JMP() {
 	// Поскольку переход безусловный, мы передаём абсолютное значение указателя на инструкцию
-	auto p = grid[current_instruction][2];
+	auto p = grid[current_instruction][1];
 	if (jmp_address_detection(p) != 0) return;
 	int addr = digit_getter(p);
-	this->current_instruction = (addr / 4);
+	this->current_instruction = (addr / 4 - 1);
 }
 
 void Remote::JE() {
-	auto p = grid[current_instruction][2];
+	auto p = grid[current_instruction][1];
 	if (jmp_address_detection(p) == 0) return;
-	if (this->flag != "equal") return;
-	int addr = digit_getter(p);
-	this->current_instruction = (this->current_instruction + 4 + (addr / 4));
+	if (this->flag != 0) return;
+	int addr = digit_getter(p) * jmp_address_detection(p);
+	this->current_instruction = (this->current_instruction + (addr / 4));
 }
 
 void Remote::JNE() {
-	auto p = grid[current_instruction][2];
+	auto p = grid[current_instruction][1];
 	if (jmp_address_detection(p) == 0) return;
-	if (this->flag == "equal") return; // нужно узнать как ведёт себя jne при пустом флаге
-	int addr = digit_getter(p);
-	this->current_instruction = (this->current_instruction + 4 + (addr / 4));
+	if (this->flag == 0) return; // нужно узнать как ведёт себя jne при пустом флаге
+	int addr = digit_getter(p) * jmp_address_detection(p);
+	this->current_instruction = (this->current_instruction + (addr / 4));
 }
 
 void Remote::JL() {
-	auto p = grid[current_instruction][2];
+	auto p = grid[current_instruction][1];
 	if (jmp_address_detection(p) == 0) return;
-	if (this->flag != "less") return;
-	int addr = digit_getter(p);
-	this->current_instruction = (this->current_instruction + 4 + (addr / 4));
+	if (this->flag != -1) return;
+	int addr = digit_getter(p) * jmp_address_detection(p);
+	this->current_instruction = (this->current_instruction + (addr / 4));
 }
 
 void Remote::JLE() {
-	auto p = grid[current_instruction][2];
+	auto p = grid[current_instruction][1];
 	if (jmp_address_detection(p) == 0) return;
-	if (this->flag != "less or equal") return;
-	int addr = digit_getter(p);
-	this->current_instruction = (this->current_instruction + 4 + (addr / 4));
+	if (this->flag != -2) return;
+	int addr = digit_getter(p) * jmp_address_detection(p);
+	this->current_instruction = (this->current_instruction + (addr / 4));
 }
 
 void Remote::JG() {
-	auto p = grid[current_instruction][2];
+	auto p = grid[current_instruction][1];
 	if (jmp_address_detection(p) == 0) return;
-	if (this->flag != "grace") return;
-	int addr = digit_getter(p);
-	this->current_instruction = (this->current_instruction + 4 + (addr / 4));
+	if (this->flag != 1) return;
+	int addr = digit_getter(p) * jmp_address_detection(p);
+	this->current_instruction = (this->current_instruction + (addr / 4));
 }
 
 void Remote::JGE() {
-	auto p = grid[current_instruction][2];
+	auto p = grid[current_instruction][1];
 	if (jmp_address_detection(p) == 0) return;
-	if (this->flag != "grace or equal") return;
-	int addr = digit_getter(p);
-	this->current_instruction = (this->current_instruction + 4 + (addr / 4));
+	if (this->flag != 2) return;
+	int addr = digit_getter(p) * jmp_address_detection(p);
+	this->current_instruction = (this->current_instruction + (addr / 4));
 }
 
 void Remote::LD()

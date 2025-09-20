@@ -12,9 +12,12 @@ class Remote;
 class Command;
 class Interpretator
 {
+	int n;
+	int iter;
 	//нужные поля для ремоута
 	string** grid;
 	vector<double> memory;
+
 	//Ram
 	// 
 	//caм ремоут 
@@ -23,19 +26,17 @@ class Interpretator
 	Command* com = nullptr; // сюда мы загружаем исполняемую программу
 
 
+	
+	
 	map<string, Command*> instructions;
-
 
 	//набор всех классов команд
 
 public:
 
 
-	Interpretator(string** _grid, vector<double> _memory);
-	~Interpretator()
-	{
-		//
-	}
+	Interpretator(int _n, string** _grid, vector<double> _memory);
+	~Interpretator();
 
 	void executeCommand();
 
