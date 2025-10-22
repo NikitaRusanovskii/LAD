@@ -48,7 +48,7 @@ public:
 };
 
 
-
+class Memory;
 class Remote : public Reciever // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 {
 	string** grid;
@@ -56,15 +56,16 @@ class Remote : public Reciever // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿
 	int* registers;
 	double* registers_f;
 
-	vector<double> memory;
+	Memory* memory;
 	
 	int flag;
 public:
-	Remote(string** _grid, vector<double> _memory);
+	Remote(string** _grid, Memory* _memory);
 	~Remote()
 	{
 		delete registers;
 		delete registers_f;
+		delete memory;
 	}
 	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	int digit_getter(string s);

@@ -1,5 +1,7 @@
 #include "Reciever.h"
 #include "Helpers.h"
+#include "Memory.h"
+
 
 
 
@@ -14,12 +16,13 @@ smatch matches;
 #define REG(x) registers[digit_getter(grid[current_instruction][x])]
 #define REGF(x) registers_f[digit_getter(grid[current_instruction][x])]
 #define MEM(x) memory[(ld_st_address_converter(grid[current_instruction][x])-1000)/4]
+#define MEMR(x) (*memory)[ld_st_address_converter(grid[current_instruction][x])]
+#define MEMW(x, v) (*memory).store(ld_st_address_converter(grid[current_instruction][x]), v)
 
 
 
 
-
-Remote::Remote(string** _grid, vector<double> _memory)
+Remote::Remote(string** _grid, Memory* _memory)
 {
 	registers = new int[32];
 	registers_f = new double[64];
@@ -216,7 +219,7 @@ void Remote::JMP() {
 	auto p = grid[current_instruction][1];
 	if (jmp_address_detection(p) != 0) return;
 	int addr = digit_getter(p);
-	this->current_instruction = (addr / 4 - 1);
+	this->current_instruction = (addr / 4 - 1);//?? почему -1?
 }
 
 void Remote::JE() {
@@ -272,11 +275,13 @@ void Remote::LD()
 	// ��������� ������ ����� ��������
 	if (grid[current_instruction][2][0] == 'r')
 	{
-		REG(2) = MEM(1);
+		int f = 2;
+		
+		REG(2) = MEMR(1);
 	}
 	else
 	{
-		REGF(2) = MEM(1);
+		REGF(2) = MEMR(1);
 	}
 }
 
@@ -284,11 +289,25 @@ void Remote::ST()
 {
 	if (grid[current_instruction][1][0] == 'r')
 	{
-		MEM(2) = REG(1);
+		try
+		{
+			MEMW(2, REG(1));
+		}
+		catch (int)
+		{
+			cout << "Нельзя записывать int на место double";
+		}
 	}
 	else
 	{
-		MEM(2) = REGF(1);
+		try
+		{
+			MEMW(2, REGF(1));
+		}
+		catch (int)
+		{
+			cout << "Нельзя записывать double на место int";
+		}
 	}
 }
 

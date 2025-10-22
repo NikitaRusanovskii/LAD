@@ -1,17 +1,18 @@
 #include "Interpretator.h"
 #include"CommandIO.h"
 #include"Reciever.h"
+#include"Memory.h"
 
 #define MAX_ITERS 700
 
-Interpretator::Interpretator(int _n, string** _grid, vector<double> _memory)
+Interpretator::Interpretator(int _n, string** _grid, Memory* _memory)
 {
 	n = _n;
 	iter = 0;
 	grid = _grid;
 	memory = _memory;
 	remote = new Remote(grid, memory);
-
+	
 
 
 
@@ -120,10 +121,10 @@ void Interpretator::Interpretate()
 			remote->getCurrInst()++;
 			iter++;
 		}
-		cout << "Ended without nop";
+		cout << "Ended without nop"<<endl;
 	}
 	catch (int)
 	{
-		cout << "NOP";
+		cout << "NOP" << endl;
 	}
 }

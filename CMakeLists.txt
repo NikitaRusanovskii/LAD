@@ -34,13 +34,15 @@ add_library(lad_lib STATIC
     src/Helpers.cpp
     src/Interpretator.cpp
     src/Reciever.cpp
+    src/Memory.cpp
     include/CommandIO.h
     include/Helpers.h
     include/Interpretator.h
     include/Reciever.h
     include/token_converter.h
     include/tokenizator.h
-)
+    include/Memory.h
+)	
 
 target_include_directories(lad_lib PUBLIC 
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

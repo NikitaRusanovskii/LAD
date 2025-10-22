@@ -10,13 +10,14 @@ using namespace std;
 
 class Remote;
 class Command;
+class Memory;
 class Interpretator
 {
 	int n;
 	int iter;
 	//нужные поля для ремоута
 	string** grid;
-	vector<double> memory;
+	Memory* memory;
 
 	//Ram
 	// 
@@ -35,7 +36,7 @@ class Interpretator
 public:
 
 
-	Interpretator(int _n, string** _grid, vector<double> _memory);
+	Interpretator(int _n, string** _grid, Memory* _memory);
 	~Interpretator();
 
 	void executeCommand();
