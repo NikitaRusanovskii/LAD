@@ -2,27 +2,20 @@
 #include "Helpers.h"
 #include "Memory.h"
 
+#include"Grid.h"
+#include"RegularStorage.h"
 
 
 
-regex pattern_reg_reg("\\[\\s*[Rr](0|[1-9]|[1-2][0-9]|3[0-2])\\s*(\\+|\\-)\\s*[Rr](0|[1-9]|[1-2][0-9]|3[0-2])\\s*\\]");
-regex pattern_const_reg("\\[\\s*(\\d+)\\s*(\\+|\\-)\\s*[Rr](0|[1-9]|[1-2][0-9]|3[0-2])\\s*\\]");
-regex pattern_reg_const("\\[\\s*[Rr](0|[1-9]|[1-2][0-9]|3[0-2])\\s*(\\+|\\-)\\s*(\\d+)\\s*\\]");
-regex pattern_const("\\[\\s*(\\d+)\\s*\\]");
-regex pattern_reg("\\[\\s*[Rr](0|[1-9]|[1-2][0-9]|3[0-2])\\s*\\]");
-smatch matches;
-
-
-#define REG(x) registers[digit_getter(grid[current_instruction][x])]
-#define REGF(x) registers_f[digit_getter(grid[current_instruction][x])]
-#define MEM(x) memory[(ld_st_address_converter(grid[current_instruction][x])-1000)/4]
-#define MEMR(x) (*memory)[ld_st_address_converter(grid[current_instruction][x])]
-#define MEMW(x, v) (*memory).store(ld_st_address_converter(grid[current_instruction][x]), v)
+#define REG(x) registers[digit_getter((*grid)[current_instruction][x])]
+#define REGF(x) registers_f[digit_getter((*grid)[current_instruction][x])]
+#define MEMR(x) (*memory)[ld_st_address_converter((*grid)[current_instruction][x])]
+#define MEMW(x, v) (*memory).store(ld_st_address_converter((*grid)[current_instruction][x]), v)
 
 
 
 
-Remote::Remote(string** _grid, Memory* _memory)
+Remote::Remote(Grid* _grid, Memory* _memory)
 {
 	registers = new int[32];
 	registers_f = new double[64];
@@ -31,6 +24,11 @@ Remote::Remote(string** _grid, Memory* _memory)
 
 	grid = _grid;
 	memory = _memory;
+}
+Remote::~Remote()
+{
+	delete registers;
+	delete registers_f;
 }
 int Remote::digit_getter(string s)
 {
@@ -63,26 +61,27 @@ int Remote::ld_st_address_converter(string s)
 {
 	int res;
 	int i = 0;
-	if (regex_search(s, matches, pattern_reg_reg))
+	smatch matches;
+	if (regex_match(s, matches, RegularStorage::Instance()->getMemoryStorage()[0]))//reg+reg
 	{
 		i = matches[2] == '+' ? 1 : -1;
 		res = registers[stoi(matches[1].str())] + i*registers[stoi(matches[3].str())];
 	}
-	else if (regex_search(s, matches, pattern_const_reg))
+	else if (regex_match(s, matches, RegularStorage::Instance()->getMemoryStorage()[1]))//const+reg
 	{
 		i = matches[2] == '+' ? 1 : -1;
 		res = stoi(matches[1].str()) + i*registers[stoi(matches[3].str())];
 	}
-	else if (regex_search(s, matches, pattern_reg_const))
+	else if (regex_match(s, matches, RegularStorage::Instance()->getMemoryStorage()[2]))//reg+const
 	{
 		i = matches[2] == '+' ? 1 : -1;
 		res = registers[stoi(matches[1].str())] + i*stoi(matches[3].str());
 	}
-	else if (regex_search(s, matches, pattern_const))
+	else if (regex_match(s, matches, RegularStorage::Instance()->getMemoryStorage()[3]))//const
 	{
 		res = stoi(matches[1].str());
 	}
-	else if (regex_search(s, matches, pattern_reg))
+	else if (regex_match(s, matches, RegularStorage::Instance()->getMemoryStorage()[4]))//reg
 	{
 		res = registers[stoi(matches[1].str())];
 	}
@@ -216,14 +215,14 @@ void Remote::DEC()
 
 void Remote::JMP() {
 	// ��������� ������� �����������, �� ������� ���������� �������� ��������� �� ����������
-	auto p = grid[current_instruction][1];
+	auto p = (*grid)[current_instruction][1];
 	if (jmp_address_detection(p) != 0) return;
 	int addr = digit_getter(p);
 	this->current_instruction = (addr / 4 - 1);//?? почему -1?
 }
 
 void Remote::JE() {
-	auto p = grid[current_instruction][1];
+	auto p = (*grid)[current_instruction][1];
 	if (jmp_address_detection(p) == 0) return;
 	if (this->flag != 0) return;
 	int addr = digit_getter(p) * jmp_address_detection(p);
@@ -231,7 +230,7 @@ void Remote::JE() {
 }
 
 void Remote::JNE() {
-	auto p = grid[current_instruction][1];
+	auto p = (*grid)[current_instruction][1];
 	if (jmp_address_detection(p) == 0) return;
 	if (this->flag == 0) return; // ����� ������ ��� ���� ���� jne ��� ������ �����
 	int addr = digit_getter(p) * jmp_address_detection(p);
@@ -239,7 +238,7 @@ void Remote::JNE() {
 }
 
 void Remote::JL() {
-	auto p = grid[current_instruction][1];
+	auto p = (*grid)[current_instruction][1];
 	if (jmp_address_detection(p) == 0) return;
 	if (this->flag != -1) return;
 	int addr = digit_getter(p) * jmp_address_detection(p);
@@ -247,7 +246,7 @@ void Remote::JL() {
 }
 
 void Remote::JLE() {
-	auto p = grid[current_instruction][1];
+	auto p = (*grid)[current_instruction][1];
 	if (jmp_address_detection(p) == 0) return;
 	if (this->flag != -2) return;
 	int addr = digit_getter(p) * jmp_address_detection(p);
@@ -255,7 +254,7 @@ void Remote::JLE() {
 }
 
 void Remote::JG() {
-	auto p = grid[current_instruction][1];
+	auto p = (*grid)[current_instruction][1];
 	if (jmp_address_detection(p) == 0) return;
 	if (this->flag != 1) return;
 	int addr = digit_getter(p) * jmp_address_detection(p);
@@ -263,7 +262,7 @@ void Remote::JG() {
 }
 
 void Remote::JGE() {
-	auto p = grid[current_instruction][1];
+	auto p = (*grid)[current_instruction][1];
 	if (jmp_address_detection(p) == 0) return;
 	if (this->flag != 2) return;
 	int addr = digit_getter(p) * jmp_address_detection(p);
@@ -273,10 +272,9 @@ void Remote::JGE() {
 void Remote::LD()
 {
 	// ��������� ������ ����� ��������
-	if (grid[current_instruction][2][0] == 'r')
+
+	if ((*grid)[current_instruction][2][0] == 'r')
 	{
-		int f = 2;
-		
 		REG(2) = MEMR(1);
 	}
 	else
@@ -287,7 +285,7 @@ void Remote::LD()
 
 void Remote::ST()
 {
-	if (grid[current_instruction][1][0] == 'r')
+	if ((*grid)[current_instruction][1][0] == 'r')
 	{
 		try
 		{

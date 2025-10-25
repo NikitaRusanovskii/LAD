@@ -2,10 +2,11 @@
 #include"CommandIO.h"
 #include"Reciever.h"
 #include"Memory.h"
+#include "Grid.h"
 
 #define MAX_ITERS 700
 
-Interpretator::Interpretator(int _n, string** _grid, Memory* _memory)
+Interpretator::Interpretator(int _n, Grid* _grid, Memory* _memory)
 {
 	n = _n;
 	iter = 0;
@@ -54,12 +55,6 @@ Interpretator::~Interpretator()
 	}
 	delete remote;
 
-	for (int i = 0; i < n; i++)
-	{
-		delete grid[i];
-	}
-
-	//grid будет удалятся в remote
 
 	delete instructions["add"];
 	delete instructions["sub"];
@@ -115,7 +110,7 @@ void Interpretator::Interpretate()
 	{
 		while(remote->getCurrInst() < n && iter < MAX_ITERS)
 		{
-			string s = grid[remote->getCurrInst()][0];
+			string s = (*grid)[remote->getCurrInst()][0];
 			setCommand(instructions[s]);
 			executeCommand();
 			remote->getCurrInst()++;

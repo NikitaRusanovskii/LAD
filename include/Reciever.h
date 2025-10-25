@@ -49,24 +49,20 @@ public:
 
 
 class Memory;
+class Grid;
 class Remote : public Reciever // ���������� ���� ����������
 {
-	string** grid;
 	int current_instruction;
 	int* registers;
 	double* registers_f;
 
 	Memory* memory;
+	Grid* grid;
 	
 	int flag;
 public:
-	Remote(string** _grid, Memory* _memory);
-	~Remote()
-	{
-		delete registers;
-		delete registers_f;
-		delete memory;
-	}
+	Remote(Grid* _grid, Memory* _memory);
+	~Remote();
 	//���������������
 	int digit_getter(string s);
 	int jmp_address_detection(string token);

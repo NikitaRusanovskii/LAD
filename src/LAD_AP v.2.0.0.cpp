@@ -1,24 +1,13 @@
 ﻿#include <iostream>
-#include "tokenizator.h"
-#include "token_converter.h"
 #include "Interpretator.h"
 #include "Helpers.h"
 #include"Memory.h"
+#include"Grid.h"
 
 using namespace std;
 
 int main()
 {
-	string line = input();
-	size_t token_count;
-	string* token_array= tokenize(line, token_count);
-	size_t max_instr = 10;
-	size_t max_tacts = 20;
-	string** grid = array2d_init(max_instr);
-	tokens_to_grid(token_array, grid, token_count, max_instr);
-
-	cout << endl << "output: " << endl << endl;
-	output_grid(grid, max_instr, max_tacts);
 
 
 
@@ -44,6 +33,9 @@ int main()
 	m.add(1004, 3);
 	m.add(1008, 4);
 	cout << m<<endl;
+	
+	string s = "ld   [1008], r1          ld [1000] r2 sub r1 r2 r3 st r3 [1008]";
+	Grid grid(s);
 
 
 
@@ -54,7 +46,7 @@ int main()
 	//все они очень слабо зависят друг от друга и очень легко заменяемы, также крайне удобно дебажить
 
 
-	Interpretator* inter = new Interpretator(2, grid, &m);
+	Interpretator* inter = new Interpretator(grid.getSize(), &grid, &m);
 	inter->Interpretate();
 	cout << m << endl;
 }

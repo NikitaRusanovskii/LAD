@@ -35,6 +35,8 @@ add_library(lad_lib STATIC
     src/Interpretator.cpp
     src/Reciever.cpp
     src/Memory.cpp
+    src/RegularStorage.cpp
+    src/Grid.cpp
     include/CommandIO.h
     include/Helpers.h
     include/Interpretator.h
@@ -42,6 +44,8 @@ add_library(lad_lib STATIC
     include/token_converter.h
     include/tokenizator.h
     include/Memory.h
+    include/RegularStorage.h
+    include/Grid.h
 )	
 
 target_include_directories(lad_lib PUBLIC 
