@@ -35,6 +35,7 @@ int main()
 	cout << m<<endl;
 	
 	string s = "ld   [1008], r1          ld [1000] r2 sub r1 r2 r3 st r3 [1008]";
+
 	Grid grid(s);
 
 

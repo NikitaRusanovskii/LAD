@@ -1,5 +1,5 @@
 ﻿#include <iostream>
-
+#include <cassert>
 
 #include "RegularStorage.h"
 #include"Grid.h"
@@ -12,10 +12,20 @@ Grid::Grid(string _s) : s(_s)
         "fadd", "fsub", "fmul", "fdiv",
         "and", "or", "xor", "not",
         "shl", "shr", "inc", "dec",
-        "cmp", "jmp", "je", "jne" "jl", "jle", "jg", "jge"
+        "cmp", "jmp", "je", "jne", "jl", "jle", "jg", "jge"
     };
     to_lower_letter(s);
-    gridCreator(splitByInstructionsNames(s));
+   
+    try
+    {
+        gridCreator(splitByInstructionsNames(s));
+    }
+    catch (runtime_error e)
+    {
+        cout << e.what();
+        exit(EXIT_FAILURE);
+    }
+    
     size = grid.size();
 }
 

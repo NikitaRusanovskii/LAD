@@ -31,8 +31,8 @@ vector<regex> RegularStorage::instructions_storage = {
 	std::regex(R"(\s*(jmp|je|jge|jl|jg|jle|jne)\s+\[\s*(.+?)\s*\]\s*)"), // JMPS
 
 	// Memory operations
-	std::regex(R"(\s*(ld)\s*(\[.*\])\s*,?\s*([rf](?:[0-9]|[12][0-9]|3[0-2]))\s*)"), // LD
-	std::regex(R"(\s*(st)\s*([rf](?:[0-9]|[12][0-9]|3[0-2]))\s*,?\s*(\[.*\])\s*)"), // ST
+	std::regex(R"(\s*(ld)\s*(\[[\sr0-9+\-]*\])\s*,?\s*([rf](?:[0-9]|[12][0-9]|3[0-2]))\s*)"), // LD
+	std::regex(R"(\s*(st)\s*([rf](?:[0-9]|[12][0-9]|3[0-2]))\s*,?\s*(\[[\sr0-9+\-]*\])\s*)"), // ST
 	std::regex(R"(\s*(mov)\s*(r(?:[0-9]|[12][0-9]|3[0-2]))\s*,?\s*(r(?:[0-9]|[12][0-9]|3[0-2]))\s*)"),
 	std::regex(R"(\s*(mov)\s*(f(?:[0-9]|[12][0-9]|3[0-2]))\s*,?\s*(f(?:[0-9]|[12][0-9]|3[0-2]))\s*)")// MOV
 };
